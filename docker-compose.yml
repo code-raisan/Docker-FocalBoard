@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  app:
+    image: nicoulaj/focalboard
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/lib/focalboard:/var/lib/focalboard
+      - type: bind
+        source: ./config/config.json
+        target: /opt/focalboard/config.json
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    tty: true
+    volumes:
+      - ./config/database/:/docker-entrypoint-initdb.d/
+      - ./data/:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: always
